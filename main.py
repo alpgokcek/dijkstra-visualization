@@ -51,7 +51,8 @@ def add_d_edge(x1, y1, pos=2):  # pos = 1: only upper edge; else both edge
         canvas.create_line(x1 - (2 * radius) - xp / 2, (y1 + 3 * radius) + yp / 2, x1 + xp / 2, y1 + (radius) - yp / 2,
                            fill="#000")
         if pos != 1:
-            canvas.create_line(x1 - (2 * radius) - xp / 2, y1 + (radius) - yp / 2, x1 + xp / 2, (y1 + 3 * radius) + yp /2, fill="#000")
+            canvas.create_line(x1 - (2 * radius) - xp / 2, y1 + (radius) - yp / 2, x1 + xp / 2,
+                               (y1 + 3 * radius) + yp / 2, fill="#000")
 
 
     except Exception as e:
@@ -82,14 +83,18 @@ def runProgram():
 
 
 root = Tk()
-frame = Frame(root)
+frame = Frame(root, width="1000", height="550")
 frame.grid(row=0, column=0)
-
 root.configure(background='#EFEFEF')
 root.title("Dijkstra Visualization")
 
-canvas = Canvas(frame, width="1000", height="500", bd="1", relief='raised')
+canvas = Canvas(frame, width="1000", height="500", bd="1", relief='raised', scrollregion=(0, 0, 100000, 0))
 canvas.grid(row=5, column=0, rowspan=1)
+
+hbar = Scrollbar(frame, orient=HORIZONTAL, activebackground="black")
+hbar.grid(row=6, columnspan=6, sticky='ew')
+hbar.config(command=canvas.xview)
+canvas.config(xscrollcommand=hbar.set)
 
 noe_frame = Frame(frame)
 noe_frame.grid(row=0, column=0)
