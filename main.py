@@ -1,8 +1,10 @@
 from tkinter import *
+from dijkstra import Graph
 
 black = (0, 0, 0)
 white = (255, 255, 255)
 radius = 0
+graph = None
 
 root = Tk()
 frame = Frame(root, width="1000", height="550")
@@ -45,8 +47,13 @@ def add_v_edge(x1, x2, y1, y2):
         print(e)
 
 
-def add_h_edge(x1, x2, y1, y2, pos=2):  # pos = 1: only upper edge; else both edge
+def add_h_edge(x1, x2, y1, y2, pos=0):  # pos = 1: only upper edge; else both edge
     try:
+        if pos == 2:
+            canvas.create_line(x1 - (2 * radius), y1 + radius // 2, x1, y1 + radius // 2, fill="#ff0000")
+            return None
+
+
         canvas.create_line(x1 - (2 * radius), y1 + radius // 2, x1, y1 + radius // 2, fill="#000")
         if pos != 1:
             canvas.create_line(x2 - (2 * radius), y2 + radius // 2, x2, y2 + radius // 2, fill="#000")
@@ -55,14 +62,15 @@ def add_h_edge(x1, x2, y1, y2, pos=2):  # pos = 1: only upper edge; else both ed
         print(e)
 
 
-def add_d_edge(x1, y1, pos=2):  # pos = 1: only upper edge; else both edge
+def add_d_edge(x1, y1, pos=0):  # pos = 1: only upper edge; else both edge
     gap = (radius * pow(2, 0.5)) - radius
     xp = yp = gap / pow(2, 0.5)
-
-    print("gap ", gap)
-    print("xp ", xp)
-    print("yp ", yp)
     try:
+        if pos == 2:
+            canvas.create_line(x1 - (2 * radius) - xp / 2, (y1 + 3 * radius) + yp / 2, x1 + xp / 2,
+                               y1 + (radius) - yp / 2, fill="#ff0000")
+            return None
+
         canvas.create_line(x1 - (2 * radius) - xp / 2, (y1 + 3 * radius) + yp / 2, x1 + xp / 2, y1 + (radius) - yp / 2,
                            fill="#000")
         if pos != 1:
@@ -72,6 +80,48 @@ def add_d_edge(x1, y1, pos=2):  # pos = 1: only upper edge; else both edge
 
     except Exception as e:
         print(e)
+
+
+def calculate_weight(i, j):
+    return i + j
+
+
+def create_graph(number_of_elements):
+    global graph
+    graph = Graph(number_of_elements)
+    for i in range(1, number_of_elements):
+        for j in range(i, number_of_elements + 1):
+            if i % 2 == 1:
+                if max(i - j, j - i) <= 3 and i != j:
+                    graph.add_edge(i, j, calculate_weight(i, j))
+            else:
+                if max(i - j, j - i) <= 2 and i != j:
+                    graph.add_edge(i, j, calculate_weight(i, j))
+    # graph.print_graph()
+    # graph.dijkstra_shortest_path_distances()
+    output = graph.dijkstra_shortest_path(int(from_entry.get()), int(to_entry.get()))
+    visualize_shortest_path(output[0])
+
+
+def visualize_shortest_path(path):
+    path = list(path)
+    print(path)
+
+
+    for i in range(len(path) - 1):
+        current = path[i]
+        next = path[i+1]
+        if current % 2 == 0 and next % 2 == 1:
+            x1 = x2 = 100 + radius * 3 * (i + 1)
+            y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
+            add_d_edge(x1, y1, 2)
+        elif current % 2 == 1 and next % 2 == 0:
+            pass
+        elif current % 2 == next % 2:
+            print(current, next)
+            x1 = x2 = 100 + radius * 3 * (i + 1)
+            y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
+            add_h_edge(x1, x2, y1, y2, 2)
 
 
 def runProgram():
@@ -97,15 +147,55 @@ def runProgram():
         add_vertex(noe, x1, y1)
         add_h_edge(x1, x2, y1, y2, 1)
         add_d_edge(x1, y1, 1)
+    create_graph(noe)
 
 
-noe_frame = Frame(frame)
-noe_frame.grid(row=0, column=0)
+from_frame = Frame(frame)
+from_frame.grid(row=0, column=0)
 
-number_of_elements = Entry(noe_frame)
+number_of_elements = Entry(from_frame)
 number_of_elements.grid(row=0, column=0)
+number_of_elements.insert(0, "Number of Elements")
+number_of_elements.configure(state=DISABLED)
 
-number_of_elements_button = Button(noe_frame, text='Number of Elements', command=lambda: runProgram())
-number_of_elements_button.grid(row=0, column=1, columnspan=1)
+
+def on_click_from_noe(event):
+    number_of_elements.configure(state=NORMAL)
+    number_of_elements.delete(0, END)
+    number_of_elements.unbind('<Button-1>', on_click_id_noe)
+
+
+on_click_id_noe = number_of_elements.bind('<Button-1>', on_click_from_noe)
+
+from_entry = Entry(from_frame)
+from_entry.grid(row=0, column=1)
+from_entry.insert(0, "From")
+from_entry.configure(state=DISABLED)
+
+
+def on_click_from_entry(event):
+    from_entry.configure(state=NORMAL)
+    from_entry.delete(0, END)
+    from_entry.unbind('<Button-1>', on_click_id_from)
+
+
+on_click_id_from = from_entry.bind('<Button-1>', on_click_from_entry)
+
+to_entry = Entry(from_frame)
+to_entry.grid(row=0, column=2)
+to_entry.insert(0, "To")
+to_entry.configure(state=DISABLED)
+
+
+def on_click_to_entry(event):
+    to_entry.configure(state=NORMAL)
+    to_entry.delete(0, END)
+    to_entry.unbind('<Button-1>', on_click_id_to)
+
+
+on_click_id_to = to_entry.bind('<Button-1>', on_click_to_entry)
+
+from_entry_button = Button(from_frame, text='Set From and To', command=lambda: runProgram())
+from_entry_button.grid(row=0, column=3, columnspan=1)
 
 root.mainloop()
