@@ -4,6 +4,21 @@ black = (0, 0, 0)
 white = (255, 255, 255)
 radius = 0
 
+root = Tk()
+frame = Frame(root, width="1000", height="550")
+frame.grid(row=0, column=0)
+root.configure(background='#EFEFEF')
+root.title("Dijkstra Visualization")
+
+canvas = Canvas(frame, width="1000", height="500", bd="1", relief='raised', scrollregion=(0, 0, 100000, 0))
+canvas.grid(row=5, column=0, rowspan=1)
+canvas.configure(scrollregion=canvas.bbox("all"))
+
+hbar = Scrollbar(frame, orient=HORIZONTAL, activebackground="black")
+hbar.grid(row=6, columnspan=6, sticky='ew')
+hbar.config(command=canvas.xview)
+canvas.config(xscrollcommand=hbar.set)
+
 
 def calculate_radius():
     global radius
@@ -60,9 +75,11 @@ def add_d_edge(x1, y1, pos=2):  # pos = 1: only upper edge; else both edge
 
 
 def runProgram():
+    global canvas
     canvas.delete("all")
     calculate_radius()
     noe = int(number_of_elements.get())
+    canvas.configure(scrollregion=(0, 0, 100 + noe * 78, 0))
     x1 = x2 = 100
     counter = 1
     y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
@@ -81,20 +98,6 @@ def runProgram():
         add_h_edge(x1, x2, y1, y2, 1)
         add_d_edge(x1, y1, 1)
 
-
-root = Tk()
-frame = Frame(root, width="1000", height="550")
-frame.grid(row=0, column=0)
-root.configure(background='#EFEFEF')
-root.title("Dijkstra Visualization")
-
-canvas = Canvas(frame, width="1000", height="500", bd="1", relief='raised', scrollregion=(0, 0, 100000, 0))
-canvas.grid(row=5, column=0, rowspan=1)
-
-hbar = Scrollbar(frame, orient=HORIZONTAL, activebackground="black")
-hbar.grid(row=6, columnspan=6, sticky='ew')
-hbar.config(command=canvas.xview)
-canvas.config(xscrollcommand=hbar.set)
 
 noe_frame = Frame(frame)
 noe_frame.grid(row=0, column=0)
