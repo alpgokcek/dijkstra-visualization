@@ -19,6 +19,13 @@ class Graph:
     def empty_graph(self):
         self.nodes.clear()
 
+    def print_path(self, start, end, parent_dict):
+        print(end)
+        if parent_dict[end] == start:
+            print(parent_dict[end])
+        else:
+            self.print_path(start, parent_dict[end], parent_dict)
+
     def dijkstra_shortest_path_distances(self, where=1):
         distances = []
         heap = []
@@ -40,11 +47,16 @@ class Graph:
                     newDistance = distances[min_distance[0]] + edgeDistance
 
                     if newDistance < distances[vertex]:
-                        distances[vertex] = newDistance
-                        heapq.heappush(heap, (vertex, distances[vertex]))
-        print(distances[1:len(distances)])
+                        try:
+                            distances[vertex] = newDistance
+                            old_index = heap.index((vertex, distances[vertex], min_distance[0]))
+                            heap[old_index] = (vertex, distances[vertex], min_distance[0])
+                            heap._siftdown(heap, old_index)
 
-    def dijkstra_shortest_path(self, where=1, to=1):
+                        except ValueError:
+                            heapq.heappush(heap, (vertex, distances[vertex], min_distance[0]))
+
+    def dijkstra_shortest_path(self, where, to):
         distances = []
         heap = []
         max_number = pow(2, 32)
@@ -55,13 +67,14 @@ class Graph:
             distances.append(max_number)
         heapq.heappush(heap, (where, 0, None))
         distances[where] = 0
+        popped_elements = dict()  # keys=node, value=parent of the node
         while len(visited) != self.number_of_vertices:
             min_distance = heapq.heappop(heap)
+            popped_elements[min_distance[0]] = min_distance[2]
             visited.append(min_distance[0])
-            path.add(min_distance[2])
             if min_distance[0] == to:
                 path.add(to)
-                print(distances)
+                self.print_path(where, to, popped_elements)
                 if path.__contains__(None): path.remove(None)
                 return path, min_distance[1]
             for i in range(0, len(self.nodes[min_distance[0]])):
@@ -72,5 +85,12 @@ class Graph:
                     newDistance = distances[min_distance[0]] + edgeDistance
 
                     if newDistance < distances[vertex]:
-                        distances[vertex] = newDistance
-                        heapq.heappush(heap, (vertex, distances[vertex], min_distance[0]))
+                        try:
+                            distances[vertex] = newDistance
+                            old_index = heap.index((vertex, distances[vertex], min_distance[0]))
+                            heap[old_index] = (vertex, distances[vertex], min_distance[0])
+                            heap._siftdown(heap, old_index)
+
+
+                        except ValueError:
+                            heapq.heappush(heap, (vertex, distances[vertex], min_distance[0]))
