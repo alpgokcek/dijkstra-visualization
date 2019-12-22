@@ -71,6 +71,11 @@ def add_d_edge(x1, y1, pos=0):  # pos = 1: only upper edge; else both edge
                                y1 + (radius) - yp / 2, fill="#ff0000")
             return None
 
+        elif pos == 3:
+            canvas.create_line(x1 - (2 * radius) - xp / 2, y1 + (radius) - yp / 2,   x1 + xp / 2,
+                               (y1 + 3 * radius) + yp / 2, fill="#ff0000")
+            return None
+
         canvas.create_line(x1 - (2 * radius) - xp / 2, (y1 + 3 * radius) + yp / 2, x1 + xp / 2, y1 + (radius) - yp / 2,
                            fill="#000")
         if pos != 1:
@@ -97,17 +102,37 @@ def create_graph(number_of_elements):
             else:
                 if max(i - j, j - i) <= 2 and i != j:
                     graph.add_edge(i, j, calculate_weight(i, j))
-    # graph.print_graph()
-    # graph.dijkstra_shortest_path_distances()
     output = graph.dijkstra_shortest_path(int(from_entry.get()), int(to_entry.get()))
-    visualize_shortest_path(output[0])
+    visualize_shortest_path(output)
+    print("output ", output)
 
 
 def visualize_shortest_path(path):
-    path = list(path)
-    print(path)
+    for i in range(len(path) - 1):
+        current = path[i]
+        next = path[i+1]
+        print(current, next)
+        if current % 2 == 0 and next % 2 == 1 and next > current:
+            x1 = 253 + abs(current/2 - 1) * 153
+            y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
+            add_d_edge(x1, y1, 2)
+            print("x1, y1", x1, y1)
+        elif current % 2 == 0 and next % 2 == 1 and next < current:
+            x1 = 253 + (next - 1)/2 * 153
+            y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
+            add_d_edge(x1, y1, 3)
+            print("x1, y1", x1, y1)
+        elif current % 2 == next % 2:
+            if current % 2 == 1:
+                print("dgee")
+                x1 = x2 = 100 + radius * 3 * (current + 1)
+                y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
+                add_h_edge(x1, x2, y1, y2, 2)
 
 
+
+
+    '''
     for i in range(len(path) - 1):
         current = path[i]
         next = path[i+1]
@@ -118,11 +143,11 @@ def visualize_shortest_path(path):
         elif current % 2 == 1 and next % 2 == 0:
             pass
         elif current % 2 == next % 2:
-            print(current, next)
+            print("cn ",current, next)
             x1 = x2 = 100 + radius * 3 * (i + 1)
             y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
             add_h_edge(x1, x2, y1, y2, 2)
-
+    '''
 
 def runProgram():
     global canvas

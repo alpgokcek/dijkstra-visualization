@@ -22,9 +22,9 @@ class Graph:
     def print_path(self, start, end, parent_dict):
         path_list = list()
         path_list.append(end)
-        print(end)
+        #print(end)
         if parent_dict[end] == start:
-            print(parent_dict[end])
+            #print(parent_dict[end])
             path_list.append(parent_dict[end])
         else:
             path_list.extend(self.print_path(start, parent_dict[end], parent_dict))
@@ -78,10 +78,10 @@ class Graph:
             visited.append(min_distance[0])
             if min_distance[0] == to:
                 path.add(to)
-                mylist= self.print_path(where, to, popped_elements)
-                print("mylist", mylist)
+                print("Path: ")
+                mylist = self.print_path(where, to, popped_elements)
                 if path.__contains__(None): path.remove(None)
-                return path, min_distance[1]
+                return mylist
             for i in range(0, len(self.nodes[min_distance[0]])):
                 node = self.nodes[min_distance[0]][i]
                 vertex, weight = node[0], node[1]
