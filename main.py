@@ -37,10 +37,14 @@ def add_vertex(data, x1, y1):
         print(e)
 
 
-def add_v_edge(x1, x2, y1, y2):
+def add_v_edge(x1, x2, y1, y2, pos=1):
     try:
         x1 = x2 = x1 + radius / 2
         y1 = y1 + radius
+        if pos == 2:
+            canvas.create_line(x1, y1, x2, y2, fill="#ff0000")
+            return None
+
         canvas.create_line(x1, y1, x2, y2, fill="#000")
 
     except Exception as e:
@@ -52,7 +56,6 @@ def add_h_edge(x1, x2, y1, y2, pos=0):  # pos = 1: only upper edge; else both ed
         if pos == 2:
             canvas.create_line(x1 - (2 * radius), y1 + radius // 2, x1, y1 + radius // 2, fill="#ff0000")
             return None
-
 
         canvas.create_line(x1 - (2 * radius), y1 + radius // 2, x1, y1 + radius // 2, fill="#000")
         if pos != 1:
@@ -68,11 +71,11 @@ def add_d_edge(x1, y1, pos=0):  # pos = 1: only upper edge; else both edge
     try:
         if pos == 2:
             canvas.create_line(x1 - (2 * radius) - xp / 2, (y1 + 3 * radius) + yp / 2, x1 + xp / 2,
-                               y1 + (radius) - yp / 2, fill="#ff0000")
+                               y1 + radius - yp / 2, fill="#ff0000")
             return None
 
         elif pos == 3:
-            canvas.create_line(x1 - (2 * radius) - xp / 2, y1 + (radius) - yp / 2,   x1 + xp / 2,
+            canvas.create_line(x1 - (2 * radius) - xp / 2, y1 + radius - yp / 2, x1 + xp / 2,
                                (y1 + 3 * radius) + yp / 2, fill="#ff0000")
             return None
 
@@ -112,36 +115,45 @@ def visualize_shortest_path(path):
         current = path[i]
         next = path[i+1]
         print(current, next)
-        if current % 2 == 0 and next % 2 == 1 and abs(current - next) > 1:
+        if (current % 2 == 0 and next == current - 1) or (current % 2 == 1 and next == current + 1):
+            x1 = x2 = 100 + (min(current, next) - 1) / 2 * radius * 3
+            y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
+            add_v_edge(x1, x2, y1, y2, 2)
+
+        elif current % 2 == 0 and next % 2 == 1:
+            print("gridm")
             if next > current:
                 x1 = 253 + abs(current/2 - 1) * 153
                 y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
                 add_d_edge(x1, y1, 2)
                 print("x1, y1", x1, y1)
             elif next < current:
-                print("sellamm")
+                print("dng")
                 x1 = 253 + (next - 1) /2 * 153
                 y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
                 add_d_edge(x1, y1, 3)
                 print("x1, y1", x1, y1)
-        elif current % 2 == 1 and next % 2 == 0 and abs(current - next) > 1:
+        elif current % 2 == 1 and next % 2 == 0:
             if next > current:
-                x1 = 253 + abs(next/2 - 1) * 153
+                x1 = 253 + abs(next/2 - 2) * 153
                 y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
                 add_d_edge(x1, y1, 3)
                 print("x1, y1", x1, y1)
             elif next < current:
-                print("sellamm")
+                print("dian")
                 x1 = 253 + (current - 3) / 2 * 153
                 y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
                 add_d_edge(x1, y1, 2)
                 print("x1, y1", x1, y1)
         elif current % 2 == next % 2:
             if current % 2 == 1:
-                print("dgee")
-                x1 = 100 + radius + (4 * radius) * (current - 1 / 2)
+                x1 = x2 = 100 + radius * 3 * (max(current, next) - 1) / 2
                 y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
-                add_h_edge(x1, x1, y1, y2, 2)
+            else:
+                x1 = x2 = 100 + radius * 3 * min(current, next) / 2
+                y1, y2 = (500 - 7 * radius) + 3*radius, (500 - 7 * radius) + (radius * 6)
+            add_h_edge(x1, x2, y1, y2, 2)
+
 
 
 
