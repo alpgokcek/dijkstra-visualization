@@ -112,22 +112,36 @@ def visualize_shortest_path(path):
         current = path[i]
         next = path[i+1]
         print(current, next)
-        if current % 2 == 0 and next % 2 == 1 and next > current:
-            x1 = 253 + abs(current/2 - 1) * 153
-            y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
-            add_d_edge(x1, y1, 2)
-            print("x1, y1", x1, y1)
-        elif current % 2 == 0 and next % 2 == 1 and next < current:
-            x1 = 253 + (next - 1)/2 * 153
-            y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
-            add_d_edge(x1, y1, 3)
-            print("x1, y1", x1, y1)
+        if current % 2 == 0 and next % 2 == 1 and abs(current - next) > 1:
+            if next > current:
+                x1 = 253 + abs(current/2 - 1) * 153
+                y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
+                add_d_edge(x1, y1, 2)
+                print("x1, y1", x1, y1)
+            elif next < current:
+                print("sellamm")
+                x1 = 253 + (next - 1) /2 * 153
+                y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
+                add_d_edge(x1, y1, 3)
+                print("x1, y1", x1, y1)
+        elif current % 2 == 1 and next % 2 == 0 and abs(current - next) > 1:
+            if next > current:
+                x1 = 253 + abs(next/2 - 1) * 153
+                y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
+                add_d_edge(x1, y1, 3)
+                print("x1, y1", x1, y1)
+            elif next < current:
+                print("sellamm")
+                x1 = 253 + (current - 3) / 2 * 153
+                y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
+                add_d_edge(x1, y1, 2)
+                print("x1, y1", x1, y1)
         elif current % 2 == next % 2:
             if current % 2 == 1:
                 print("dgee")
-                x1 = x2 = 100 + radius * 3 * (current + 1)
+                x1 = 100 + radius + (4 * radius) * (current - 1 / 2)
                 y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
-                add_h_edge(x1, x2, y1, y2, 2)
+                add_h_edge(x1, x1, y1, y2, 2)
 
 
 
