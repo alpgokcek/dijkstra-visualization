@@ -104,7 +104,7 @@ def create_graph(number_of_elements):
                     graph.add_edge(i, j, calculate_weight(i, j))
     output = graph.dijkstra_shortest_path(int(from_entry.get()), int(to_entry.get()))
     visualize_shortest_path(output)
-    print("output ", output)
+    print("output ", output[::-1])
 
 
 def visualize_shortest_path(path):
