@@ -20,11 +20,15 @@ class Graph:
         self.nodes.clear()
 
     def print_path(self, start, end, parent_dict):
+        path_list = list()
+        path_list.append(end)
         print(end)
         if parent_dict[end] == start:
             print(parent_dict[end])
+            path_list.append(parent_dict[end])
         else:
-            self.print_path(start, parent_dict[end], parent_dict)
+            path_list.extend(self.print_path(start, parent_dict[end], parent_dict))
+        return path_list
 
     def dijkstra_shortest_path_distances(self, where=1):
         distances = []
@@ -74,7 +78,8 @@ class Graph:
             visited.append(min_distance[0])
             if min_distance[0] == to:
                 path.add(to)
-                self.print_path(where, to, popped_elements)
+                mylist= self.print_path(where, to, popped_elements)
+                print("mylist", mylist)
                 if path.__contains__(None): path.remove(None)
                 return path, min_distance[1]
             for i in range(0, len(self.nodes[min_distance[0]])):
