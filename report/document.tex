@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{url}
+\captionsetup{justification=centering}
 
 
 \algnewcommand\algorithmicforeach{\textbf{for each}}
@@ -51,6 +52,16 @@
 	\end{algorithm}
 
 	\section{The Program}
+	\begin{center}
+		\includegraphics[scale=.2]{main_window.png}
+	\end{center}
+	\captionof{figure}{Main Window of the program for values selected as; N=10, S=1, D=6}
+	
+	\section{Time Meausurements}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[scale=.4]{matlab/time.eps}
+	\end{figure}
 
 	\bibliographystyle{IEEEtran}
 	\bibliography{references}
