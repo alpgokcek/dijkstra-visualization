@@ -1,7 +1,9 @@
 from tkinter import *
 from dijkstra import Graph
+import time
 
 black = (0, 0, 0)
+linewidth = 5
 white = (255, 255, 255)
 radius = 0
 graph = None
@@ -42,7 +44,7 @@ def add_v_edge(x1, x2, y1, y2, pos=1):
         x1 = x2 = x1 + radius / 2
         y1 = y1 + radius
         if pos == 2:
-            canvas.create_line(x1, y1, x2, y2, fill="#ff0000")
+            canvas.create_line(x1, y1, x2, y2, fill="#ff0000", width=linewidth)
             return None
 
         canvas.create_line(x1, y1, x2, y2, fill="#000")
@@ -54,7 +56,8 @@ def add_v_edge(x1, x2, y1, y2, pos=1):
 def add_h_edge(x1, x2, y1, y2, pos=0):  # pos = 1: only upper edge; else both edge
     try:
         if pos == 2:
-            canvas.create_line(x1 - (2 * radius), y1 + radius // 2, x1, y1 + radius // 2, fill="#ff0000")
+            canvas.create_line(x1 - (2 * radius), y1 + radius // 2, x1, y1 + radius // 2, fill="#ff0000",
+                               width=linewidth)
             return None
 
         canvas.create_line(x1 - (2 * radius), y1 + radius // 2, x1, y1 + radius // 2, fill="#000")
@@ -71,20 +74,19 @@ def add_d_edge(x1, y1, pos=0):  # pos = 1: only upper edge; else both edge
     try:
         if pos == 2:
             canvas.create_line(x1 - (2 * radius) - xp / 2, (y1 + 3 * radius) + yp / 2, x1 + xp / 2,
-                               y1 + radius - yp / 2, fill="#ff0000")
+                               y1 + radius - yp / 2, fill="#ff0000", width=linewidth)
             return None
 
         elif pos == 3:
             canvas.create_line(x1 - (2 * radius) - xp / 2, y1 + radius - yp / 2, x1 + xp / 2,
-                               (y1 + 3 * radius) + yp / 2, fill="#ff0000")
+                               (y1 + 3 * radius) + yp / 2, fill="#ff0000", width=linewidth)
             return None
 
-        canvas.create_line(x1 - (2 * radius) - xp / 2, (y1 + 3 * radius) + yp / 2, x1 + xp / 2, y1 + (radius) - yp / 2,
+        canvas.create_line(x1 - (2 * radius) - xp / 2, (y1 + 3 * radius) + yp / 2, x1 + xp / 2, y1 + radius - yp / 2,
                            fill="#000")
         if pos != 1:
-            canvas.create_line(x1 - (2 * radius) - xp / 2, y1 + (radius) - yp / 2, x1 + xp / 2,
+            canvas.create_line(x1 - (2 * radius) - xp / 2, y1 + radius - yp / 2, x1 + xp / 2,
                                (y1 + 3 * radius) + yp / 2, fill="#000")
-
 
     except Exception as e:
         print(e)
@@ -105,77 +107,54 @@ def create_graph(number_of_elements):
             else:
                 if max(i - j, j - i) <= 2 and i != j:
                     graph.add_edge(i, j, calculate_weight(i, j))
+    start = time.time()
     output = graph.dijkstra_shortest_path(int(from_entry.get()), int(to_entry.get()))
+    end = time.time()
     visualize_shortest_path(output)
     print("output ", output[::-1])
+    print("time ", end - start)
 
 
 def visualize_shortest_path(path):
     for i in range(len(path) - 1):
-        current = path[i]
-        next = path[i+1]
-        print(current, next)
-        if (current % 2 == 0 and next == current - 1) or (current % 2 == 1 and next == current + 1):
-            x1 = x2 = 100 + (min(current, next) - 1) / 2 * radius * 3
+        current_node = path[i]
+        next_node = path[i+1]
+        print(current_node, next_node)
+        if (current_node % 2 == 0 and next_node == current_node - 1) or (current_node % 2 == 1
+                                                                         and next_node == current_node + 1):
+            x1 = x2 = 100 + (min(current_node, next_node) - 1) / 2 * radius * 3
             y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
             add_v_edge(x1, x2, y1, y2, 2)
 
-        elif current % 2 == 0 and next % 2 == 1:
-            print("gridm")
-            if next > current:
-                x1 = 253 + abs(current/2 - 1) * 153
+        elif current_node % 2 == 0 and next_node % 2 == 1:
+            if next_node > current_node:
+                x1 = 253 + abs(current_node/2 - 1) * 153
                 y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
                 add_d_edge(x1, y1, 2)
-                print("x1, y1", x1, y1)
-            elif next < current:
-                print("dng")
-                x1 = 253 + (next - 1) /2 * 153
+            elif next_node < current_node:
+                x1 = 253 + (next_node - 1) / 2 * 153
                 y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
                 add_d_edge(x1, y1, 3)
-                print("x1, y1", x1, y1)
-        elif current % 2 == 1 and next % 2 == 0:
-            if next > current:
-                x1 = 253 + abs(next/2 - 2) * 153
+        elif current_node % 2 == 1 and next_node % 2 == 0:
+            if next_node > current_node:
+                x1 = 253 + abs(next_node/2 - 2) * 153
                 y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
                 add_d_edge(x1, y1, 3)
-                print("x1, y1", x1, y1)
-            elif next < current:
-                print("dian")
-                x1 = 253 + (current - 3) / 2 * 153
+            elif next_node < current_node:
+                x1 = 253 + (current_node - 3) / 2 * 153
                 y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
                 add_d_edge(x1, y1, 2)
-                print("x1, y1", x1, y1)
-        elif current % 2 == next % 2:
-            if current % 2 == 1:
-                x1 = x2 = 100 + radius * 3 * (max(current, next) - 1) / 2
+        elif current_node % 2 == next_node % 2:
+            if current_node % 2 == 1:
+                x1 = x2 = 100 + radius * 3 * (max(current_node, next_node) - 1) / 2
                 y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
             else:
-                x1 = x2 = 100 + radius * 3 * min(current, next) / 2
+                x1 = x2 = 100 + radius * 3 * min(current_node, next_node) / 2
                 y1, y2 = (500 - 7 * radius) + 3*radius, (500 - 7 * radius) + (radius * 6)
             add_h_edge(x1, x2, y1, y2, 2)
 
 
-
-
-
-    '''
-    for i in range(len(path) - 1):
-        current = path[i]
-        next = path[i+1]
-        if current % 2 == 0 and next % 2 == 1:
-            x1 = x2 = 100 + radius * 3 * (i + 1)
-            y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
-            add_d_edge(x1, y1, 2)
-        elif current % 2 == 1 and next % 2 == 0:
-            pass
-        elif current % 2 == next % 2:
-            print("cn ",current, next)
-            x1 = x2 = 100 + radius * 3 * (i + 1)
-            y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
-            add_h_edge(x1, x2, y1, y2, 2)
-    '''
-
-def runProgram():
+def run_program():
     global canvas
     canvas.delete("all")
     calculate_radius()
@@ -194,7 +173,7 @@ def runProgram():
             add_d_edge(x1, y1)
 
         x1 = x2 = 100 + radius * 3 * (i + 1)
-    if (noe % 2 == 1):
+    if noe % 2 == 1:
         add_vertex(noe, x1, y1)
         add_h_edge(x1, x2, y1, y2, 1)
         add_d_edge(x1, y1, 1)
@@ -246,7 +225,7 @@ def on_click_to_entry(event):
 
 on_click_id_to = to_entry.bind('<Button-1>', on_click_to_entry)
 
-from_entry_button = Button(from_frame, text='Set From and To', command=lambda: runProgram())
+from_entry_button = Button(from_frame, text='Set From and To', command=lambda: run_program())
 from_entry_button.grid(row=0, column=3, columnspan=1)
 
 root.mainloop()
