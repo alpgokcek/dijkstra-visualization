@@ -62,6 +62,7 @@ class Graph:
 
                         except ValueError:
                             heapq.heappush(heap, (vertex, distances[vertex], min_distance[0]))
+        return distances
 
     def dijkstra_shortest_path(self, where, to):
         distances = []
@@ -84,8 +85,10 @@ class Graph:
                 mylist = self.print_path(where, to, popped_elements)
                 if path.__contains__(None): path.remove(None)
                 total_weight = 0
-                for i in mylist: total_weight += i
-                return (mylist, i)
+                for i in range(len(mylist)-1):
+                    print(total_weight)
+                    total_weight += self.calculate_weight(mylist[i], mylist[i+1])
+                return (mylist, total_weight)
             for i in range(0, len(self.nodes[min_distance[0]])):
                 node = self.nodes[min_distance[0]][i]
                 vertex, weight = node[0], node[1]

@@ -1,5 +1,6 @@
 from tkinter import *
 from dijkstra import Graph
+from tkinter import font  as tkfont
 import time
 
 black = (0, 0, 0)
@@ -14,23 +15,40 @@ frame.grid(row=0, column=0)
 root.configure(background='#EFEFEF')
 root.title("Dijkstra Visualization")
 
+algorithm_font = tkfont.Font(family='Helvetica', size=30, weight="bold", slant="italic")
+Label(frame, text="Dijkstra Visualization", font=algorithm_font).grid(row=0, column=0)
+
 canvas = Canvas(frame, width="1000", height="500", bd="1", relief='raised', scrollregion=(0, 0, 100000, 0))
-canvas.grid(row=5, column=0, rowspan=1)
+canvas.grid(row=6, column=0, rowspan=1)
 canvas.configure(scrollregion=canvas.bbox("all"))
 
 hbar = Scrollbar(frame, orient=HORIZONTAL, activebackground="black")
-hbar.grid(row=6, columnspan=6, sticky='ew')
+hbar.grid(row=7, columnspan=6, sticky='ew')
 hbar.config(command=canvas.xview)
 canvas.config(xscrollcommand=hbar.set)
 
-running_time = StringVar(value="Running Time: 0s")
-
-running_time_label = Label(frame, textvariable=running_time)
-running_time_label.grid(row=2, column=0)
+path_frame = Frame(frame)
+path_frame.grid(row=5, column=0)
 
 path_var = StringVar(value="")
-path_label = Label(frame, textvariable=path_var)
-path_label.grid(row=3, column=0)
+path_entry = Entry(path_frame, textvariable=path_var, state='readonly', width=100)
+path_entry.grid(row=3, column=0)
+
+path_hbar = Scrollbar(path_frame, orient=HORIZONTAL, activebackground="black", command=path_entry.xview)
+path_hbar.grid(row=6, column=0, sticky='ew')
+path_hbar.config(command=path_entry.xview)
+path_entry.config(xscrollcommand=path_hbar.set)
+
+running_time_weight_frame = Frame(frame)
+running_time_weight_frame.grid(row=3, column=0)
+
+running_time = StringVar(value="Running Time: 0ms")
+running_time_label = Label(running_time_weight_frame, textvariable=running_time)
+running_time_label.grid(row=0, column=0, columnspan=2, padx=(10, 100))
+
+weight_var = StringVar(value="Total Weight of Path: 0")
+weight_label = Label(running_time_weight_frame, textvariable=weight_var)
+weight_label.grid(row=0, column=3, padx=(100, 10))
 
 
 def calculate_radius():
@@ -113,15 +131,17 @@ def create_graph(number_of_elements):
                 if max(i - j, j - i) <= 2 and i != j:
                     graph.add_edge(i, j)
     start = time.time()
-    output = graph.dijkstra_shortest_path(int(from_entry.get()), int(to_entry.get()))[0]
+    (path_output, weight_output) = graph.dijkstra_shortest_path(int(from_entry.get()), int(to_entry.get()))
     end = time.time()
-    visualize_shortest_path(output)
-    print("output ", output[::-1])
+    visualize_shortest_path(path_output)
+    print("output ", path_output[::-1])
     print("time ", end - start)
-    running_time.set("Running Time:" + str((end - start)) + "s")
+    running_time.set("Running Time:" + str("{0:.2f}".format(round((end - start) * 1000, 2))) + "ms")
     string = "Path: "
-    for i in range(len(output[::-1]) - 1): string += str(output[::-1][i]) + " -> "
-    path_var.set(string+str(output[::-1][len(output)-1]))
+    for i in range(len(path_output[::-1]) - 1): string += str(path_output[::-1][i]) + " -> "
+    path_var.set(string + str(path_output[::-1][len(path_output) - 1]))
+    weight_var.set("Total Weight: " + str(weight_output))
+    print(graph.dijkstra_shortest_path_distances(int(to_entry.get())))
 
 
 def visualize_shortest_path(path):
@@ -189,10 +209,10 @@ def run_program():
 
 
 from_frame = Frame(frame)
-from_frame.grid(row=0, column=0)
+from_frame.grid(row=1, column=0)
 
 number_of_elements = Entry(from_frame)
-number_of_elements.grid(row=0, column=0)
+number_of_elements.grid(row=1, column=0)
 number_of_elements.insert(0, "Number of Elements")
 number_of_elements.configure(state=DISABLED)
 
@@ -206,7 +226,7 @@ def on_click_from_noe(event):
 on_click_id_noe = number_of_elements.bind('<Button-1>', on_click_from_noe)
 
 from_entry = Entry(from_frame)
-from_entry.grid(row=0, column=1)
+from_entry.grid(row=1, column=1)
 from_entry.insert(0, "From")
 from_entry.configure(state=DISABLED)
 
@@ -220,7 +240,7 @@ def on_click_from_entry(event):
 on_click_id_from = from_entry.bind('<Button-1>', on_click_from_entry)
 
 to_entry = Entry(from_frame)
-to_entry.grid(row=0, column=2)
+to_entry.grid(row=1, column=2)
 to_entry.insert(0, "To")
 to_entry.configure(state=DISABLED)
 
@@ -234,6 +254,6 @@ def on_click_to_entry(event):
 on_click_id_to = to_entry.bind('<Button-1>', on_click_to_entry)
 
 from_entry_button = Button(from_frame, text='Set From and To', command=lambda: run_program())
-from_entry_button.grid(row=0, column=3, columnspan=1)
+from_entry_button.grid(row=1, column=3, columnspan=1)
 
 root.mainloop()
