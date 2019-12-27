@@ -61,12 +61,22 @@
 	\end{figure}
 	\captionof{figure}{Main Window of the program for values selected as; N=10, S=1, D=6} 
 	
-	\section{Time Meausurements}
-	\begin{figure}[h]
+	\section{Time Measurements}
+	
+	After the implementation, we measured the time it takes to calculate shortest path from 1 to $N$ in a graph with $N$ number of nodes. We observed a correlation between theory and the practice.
+	Theoritical results are calculated by the $\mathcal{O}((|E| + |V|) \log{|V|})$ which stated in \textit{Introduction} section previously. Time it takes to run the program depends on the computer it ran on. During our demonstration we used the same machine with same configuration in order to get most accurate results. For different machines the expectation is to get ratios that are closer to ratio of our results. Results can be seen in detail from the figure below; \\
+	
+	\begin{figure}
 		\centering
 		\includegraphics[scale=.4]{matlab/time_2.eps}
+		\caption{$|V|$ vs. time (in seconds)}
 	\end{figure}
+
 	Note that theoretical time (showed in green line) doesn't correspond to any value of time, it is put there to emphasize the overall similarities such as curvature and trajectory etc. between actual results and calculated results.
+	
+
+	\section{Conclusion \& Discussion}
+	In this project we implemented \textit{Dijkstra's Algorithm} using Python. We developed an GUI in order to visualize the graph and the shortest path. After the implementation, we compared our results with the theoritical results. This project helped us to develop a deeper insight about the graphs and the shortest path algorithms.
 
 	\bibliographystyle{IEEEtran}
 	\bibliography{references}
