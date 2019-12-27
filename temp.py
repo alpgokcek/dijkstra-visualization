@@ -1,13 +1,12 @@
 from tkinter import *
 from dijkstra import Graph
-import time
+from tkinter import font as tkfont
 
 black = (0, 0, 0)
-linewidth = 5
 white = (255, 255, 255)
 radius = 0
 graph = None
-time_elapsed = 0
+
 root = Tk()
 frame = Frame(root, width="1000", height="550")
 frame.grid(row=0, column=0)
@@ -22,15 +21,6 @@ hbar = Scrollbar(frame, orient=HORIZONTAL, activebackground="black")
 hbar.grid(row=6, columnspan=6, sticky='ew')
 hbar.config(command=canvas.xview)
 canvas.config(xscrollcommand=hbar.set)
-
-running_time = StringVar(value="Running Time: 0s")
-
-running_time_label = Label(frame, textvariable=running_time)
-running_time_label.grid(row=2, column=0)
-
-path_var = StringVar(value="")
-path_label = Label(frame, textvariable=path_var)
-path_label.grid(row=3, column=0)
 
 
 def calculate_radius():
@@ -48,14 +38,10 @@ def add_vertex(data, x1, y1):
         print(e)
 
 
-def add_v_edge(x1, x2, y1, y2, pos=1):
+def add_v_edge(x1, x2, y1, y2):
     try:
         x1 = x2 = x1 + radius / 2
         y1 = y1 + radius
-        if pos == 2:
-            canvas.create_line(x1, y1, x2, y2, fill="#ff0000", width=linewidth)
-            return None
-
         canvas.create_line(x1, y1, x2, y2, fill="#000")
 
     except Exception as e:
@@ -65,8 +51,7 @@ def add_v_edge(x1, x2, y1, y2, pos=1):
 def add_h_edge(x1, x2, y1, y2, pos=0):  # pos = 1: only upper edge; else both edge
     try:
         if pos == 2:
-            canvas.create_line(x1 - (2 * radius), y1 + radius // 2, x1, y1 + radius // 2, fill="#ff0000",
-                               width=linewidth)
+            canvas.create_line(x1 - (2 * radius), y1 + radius // 2, x1, y1 + radius // 2, fill="#ff0000")
             return None
 
         canvas.create_line(x1 - (2 * radius), y1 + radius // 2, x1, y1 + radius // 2, fill="#000")
@@ -83,22 +68,27 @@ def add_d_edge(x1, y1, pos=0):  # pos = 1: only upper edge; else both edge
     try:
         if pos == 2:
             canvas.create_line(x1 - (2 * radius) - xp / 2, (y1 + 3 * radius) + yp / 2, x1 + xp / 2,
-                               y1 + radius - yp / 2, fill="#ff0000", width=linewidth)
+                               y1 + (radius) - yp / 2, fill="#ff0000")
             return None
 
         elif pos == 3:
-            canvas.create_line(x1 - (2 * radius) - xp / 2, y1 + radius - yp / 2, x1 + xp / 2,
-                               (y1 + 3 * radius) + yp / 2, fill="#ff0000", width=linewidth)
+            canvas.create_line(x1 - (2 * radius) - xp / 2, y1 + (radius) - yp / 2, x1 + xp / 2,
+                               (y1 + 3 * radius) + yp / 2, fill="#ff0000")
             return None
 
-        canvas.create_line(x1 - (2 * radius) - xp / 2, (y1 + 3 * radius) + yp / 2, x1 + xp / 2, y1 + radius - yp / 2,
+        canvas.create_line(x1 - (2 * radius) - xp / 2, (y1 + 3 * radius) + yp / 2, x1 + xp / 2, y1 + (radius) - yp / 2,
                            fill="#000")
         if pos != 1:
-            canvas.create_line(x1 - (2 * radius) - xp / 2, y1 + radius - yp / 2, x1 + xp / 2,
+            canvas.create_line(x1 - (2 * radius) - xp / 2, y1 + (radius) - yp / 2, x1 + xp / 2,
                                (y1 + 3 * radius) + yp / 2, fill="#000")
+
 
     except Exception as e:
         print(e)
+
+
+def calculate_weight(i, j):
+    return i + j
 
 
 def create_graph(number_of_elements):
@@ -108,61 +98,38 @@ def create_graph(number_of_elements):
         for j in range(i, number_of_elements + 1):
             if i % 2 == 1:
                 if max(i - j, j - i) <= 3 and i != j:
-                    graph.add_edge(i, j)
+                    graph.add_edge(i, j, calculate_weight(i, j))
             else:
                 if max(i - j, j - i) <= 2 and i != j:
-                    graph.add_edge(i, j)
-    start = time.time()
-    output = graph.dijkstra_shortest_path(int(from_entry.get()), int(to_entry.get()))[0]
-    end = time.time()
+                    graph.add_edge(i, j, calculate_weight(i, j))
+    output = graph.dijkstra_shortest_path(int(from_entry.get()), int(to_entry.get()))
     visualize_shortest_path(output)
     print("output ", output[::-1])
-    print("time ", end - start)
-    running_time.set("Running Time:" + str((end - start)) + "s")
-    string = "Path: "
-    for i in range(len(output[::-1]) - 1): string += str(output[::-1][i]) + " -> "
-    path_var.set(string+str(output[::-1][len(output)-1]))
 
 
 def visualize_shortest_path(path):
     for i in range(len(path) - 1):
-        current_node = path[i]
-        next_node = path[i + 1]
-        if (current_node % 2 == 0 and next_node == current_node - 1) or (current_node % 2 == 1
-                                                                         and next_node == current_node + 1):
-            x1 = x2 = 100 + (min(current_node, next_node) - 1) / 2 * radius * 3
+        current = path[i]
+        next = path[i + 1]
+        print(current, next)
+        if current % 2 == 0 and next % 2 == 1 and next > current:
+            x1 = 253 + abs(current / 2 - 1) * 153
             y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
-            add_v_edge(x1, x2, y1, y2, 2)
+            add_d_edge(x1, y1, 2)
+            print("x1, y1", x1, y1)
+        elif current % 2 == 0 and next % 2 == 1 and next < current:
+            x1 = 253 + (next - 1) / 2 * 153
+            y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
+            add_d_edge(x1, y1, 3)
+            print("x1, y1", x1, y1)
+        elif current % 2 == next % 2:
+            if current % 2 == 1:
+                print("dgee")
+                x1 = x2 = 100 + radius * 3 * (current + 1)
+                y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
+                add_h_edge(x1, x2, y1, y2, 2)
 
-        elif current_node % 2 == 0 and next_node % 2 == 1:
-            if next_node > current_node:
-                x1 = 253 + abs(current_node / 2 - 1) * 153
-                y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
-                add_d_edge(x1, y1, 2)
-            elif next_node < current_node:
-                x1 = 253 + (next_node - 1) / 2 * 153
-                y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
-                add_d_edge(x1, y1, 3)
-        elif current_node % 2 == 1 and next_node % 2 == 0:
-            if next_node > current_node:
-                x1 = 253 + abs(next_node / 2 - 2) * 153
-                y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
-                add_d_edge(x1, y1, 3)
-            elif next_node < current_node:
-                x1 = 253 + (current_node - 3) / 2 * 153
-                y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
-                add_d_edge(x1, y1, 2)
-        elif current_node % 2 == next_node % 2:
-            if current_node % 2 == 1:
-                x1 = x2 = 100 + radius * 3 * (max(current_node, next_node) - 1) / 2
-                y1, y2 = (500 - 7 * radius), (500 - 7 * radius) + (radius * 3)
-            else:
-                x1 = x2 = 100 + radius * 3 * min(current_node, next_node) / 2
-                y1, y2 = (500 - 7 * radius) + 3 * radius, (500 - 7 * radius) + (radius * 6)
-            add_h_edge(x1, x2, y1, y2, 2)
-
-
-def run_program():
+def runProgram():
     global canvas
     canvas.delete("all")
     calculate_radius()
@@ -181,7 +148,7 @@ def run_program():
             add_d_edge(x1, y1)
 
         x1 = x2 = 100 + radius * 3 * (i + 1)
-    if noe % 2 == 1:
+    if (noe % 2 == 1):
         add_vertex(noe, x1, y1)
         add_h_edge(x1, x2, y1, y2, 1)
         add_d_edge(x1, y1, 1)
@@ -189,7 +156,10 @@ def run_program():
 
 
 from_frame = Frame(frame)
-from_frame.grid(row=0, column=0)
+from_frame.grid(row=1, column=0)
+font = tkfont.Font(family='Helvetica', size=40, weight="bold", slant="italic")
+
+Label(frame, text="Dijkstra Visualization", font=font).grid(row=0, column=0, pady=(20, 20))
 
 number_of_elements = Entry(from_frame)
 number_of_elements.grid(row=0, column=0)
@@ -233,7 +203,7 @@ def on_click_to_entry(event):
 
 on_click_id_to = to_entry.bind('<Button-1>', on_click_to_entry)
 
-from_entry_button = Button(from_frame, text='Set From and To', command=lambda: run_program())
+from_entry_button = Button(from_frame, text='Set From and To', command=lambda: runProgram())
 from_entry_button.grid(row=0, column=3, columnspan=1)
 
 root.mainloop()

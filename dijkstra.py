@@ -8,10 +8,13 @@ class Graph:
 
         self.number_of_vertices = number_of_vertices
 
-    def add_edge(self, where, to, weight):
+    def calculate_weight(self, i, j):
+        return i + j
+
+    def add_edge(self, where, to):
         # adding edges for undirected graph
-        self.nodes[where].append([to, weight])
-        self.nodes[to].append([where, weight])
+        self.nodes[where].append([to, self.calculate_weight(where, to)])
+        self.nodes[to].append([where, self.calculate_weight(where, to)])
 
     def print_graph(self):
         print(self.nodes)
@@ -22,9 +25,9 @@ class Graph:
     def print_path(self, start, end, parent_dict):
         path_list = list()
         path_list.append(end)
-        #print(end)
+        # print(end)
         if parent_dict[end] == start:
-            #print(parent_dict[end])
+            # print(parent_dict[end])
             path_list.append(parent_dict[end])
         else:
             path_list.extend(self.print_path(start, parent_dict[end], parent_dict))
@@ -78,10 +81,11 @@ class Graph:
             visited.append(min_distance[0])
             if min_distance[0] == to:
                 path.add(to)
-                print("Path: ")
                 mylist = self.print_path(where, to, popped_elements)
                 if path.__contains__(None): path.remove(None)
-                return mylist
+                total_weight = 0
+                for i in mylist: total_weight += i
+                return (mylist, i)
             for i in range(0, len(self.nodes[min_distance[0]])):
                 node = self.nodes[min_distance[0]][i]
                 vertex, weight = node[0], node[1]
