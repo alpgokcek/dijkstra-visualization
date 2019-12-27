@@ -1,5 +1,5 @@
-# dijkstra-visualzation
-Dijkstra visualzation with Python
+# dijkstra-visualization
+Dijkstra visualization with Python
 
 #### Author:     Alp Gökçek, Erdal Sidal Doğan
 #### Github:     alpgokcek, erdaldogan
@@ -7,7 +7,7 @@ Dijkstra visualzation with Python
 #### Date:       December, 2019
 
 Description:
-    Dijkstra visualzation with Python
+    Dijkstra visualization with Python
 
 ## Commands
 
