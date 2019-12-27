@@ -44,7 +44,7 @@
 							\State $dist[v] \leftarrow alt$
 							\State $prev[v] \leftarrow u$
 						\EndIf
-					\EndFor
+					\EndFor-==
 				\EndWhile \\
 				\Return dist[], prev[]
 			\EndFunction
@@ -52,10 +52,14 @@
 	\end{algorithm}
 
 	\section{The Program}
-	\begin{center}
+
+	The program consists a simple and intuitive Graphical User Interface. On the top there are text fields where the user can type de number of nodes, start node and the destination node respectively. Below, there is the path from source to destination and time it took to travel between these nodes. Rest of the application window displays the nodes and emphasizes the shortest path between two given nodes in red color edges.
+
+	\begin{figure}[h]
+		\centering
 		\includegraphics[scale=.2]{main_window.png}
-	\end{center}
-	\captionof{figure}{Main Window of the program for values selected as; N=10, S=1, D=6}
+	\end{figure}
+	\captionof{figure}{Main Window of the program for values selected as; N=10, S=1, D=6} 
 	
 	\section{Time Meausurements}
 	\begin{figure}[h]
