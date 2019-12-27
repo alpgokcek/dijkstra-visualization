@@ -17,34 +17,34 @@
 \begin{document}
 	\maketitle
 	\begin{abstract}
-		Dijkstra's Shortest Path Algorithm is an algorithm which finds the shortest path between two nodes in a graph. It is widely used and adopted for many different applications, such as computer networks, road maps, social platforms etc. In this project we implemented algorithm in Python Language and visualized the shortest path.
+		Dijkstra's Shortest Path Algorithm \cite{dijkstra} is an algorithm which finds the shortest path between two nodes in a graph. It is widely used and adopted for many different applications, such as computer networks, road maps, social platforms etc. In this project we implemented algorithm in Python Language and visualized the shortest path.
 	\end{abstract}
 	\begin{IEEEkeywords}
 		Graph, Node, Vertex, Edge
 	\end{IEEEkeywords}
 	\section{Introduction}
-	\textit{Dijkstra's Algorithm} calculates the shortest path from one desired node of the graph to every other nodes. There are varios implementations of the algorithm, main difference between them is how they store the verticies of the graph, denoted with $Q$. They can be stored in regular arrays, linked lists, adjacency lists or tree structures. Running time of the algorithm can be represented with number of edges $|E|$ and number of verticies $|V|$ using big-o notation. Running time mainly depends on these structures, storing $Q$ in arrays it is $\mathcal{O}(|V|^2)$. In this project we utilized the \textit{priority queue} structure while implementing. It is more efficient way to implement comparing to arrays and adjacency lists etc. The \textit{priority queue} implementation requires $\mathcal{O}((|E| + |V|) \log{|V|})$ time in the worst case. 
+	\textit{Dijkstra's Algorithm} calculates the shortest path from one desired node of the graph to every other nodes. There are varios implementations of the algorithm, main difference between them is how they store the verticies of the graph, denoted with $Q$. They can be stored in regular arrays, linked lists, adjacency lists or tree structures.\cite{524471} Running time of the algorithm can be represented with number of edges $|E|$ and number of verticies $|V|$ using big-o notation. Running time mainly depends on these structures, storing $Q$ in arrays it is $\mathcal{O}(|V|^2)$. In this project we utilized the \textit{priority queue} structure while implementing. It is more efficient way to implement comparing to arrays and adjacency lists etc. The \textit{priority queue} implementation requires $\mathcal{O}((|E| + |V|) \log{|V|})$ time in the worst case. 
 	\begin{algorithm}
-		\caption{Using a priority queue \cite{wiki}}
+		\caption{Using a priority queue \cite{wiki} \hfill Cost}
 		\begin{algorithmic}[1]
 			\Function {Dijkstra} {\textit{Graph, source}}
-				\ForEach {vertex \textbf{v} in \textit{Graph}}
-					\State $dist[v] \leftarrow$ INFINITY                  
-					\State $prev[v] \leftarrow$ UNDEFINED
-					\State add v to Q                      
+				\ForEach {vertex \textbf{v} in \textit{Graph}}	\hfill v + 1
+					\State $dist[v] \leftarrow$ INFINITY	\hfill v
+					\State $prev[v] \leftarrow$ UNDEFINED	\hfill v
+					\State add $v$ to $Q$	\hfill v                      
 				\EndFor
-				\State $dist[source] \leftarrow$ 0
+				\State $dist[source] \leftarrow$ 0	\hfill 1
 	
-				\While {$Q$ is not empty}
-					\State $u \leftarrow$ vertex in $Q$ with min $dist[u]$
-					\State remove $u$ from $Q$
-					\ForEach {neighbor $v$ of $u$}
-						\State $alt \leftarrow dist[u] + length(u, v)$
-						\If{alt $<$ dist[v]}
-							\State $dist[v] \leftarrow alt$
-							\State $prev[v] \leftarrow u$
+				\While {$Q$ is not empty}	\hfill v + 1
+					\State $u \leftarrow$ vertex in $Q$ with min $dist[u]$	\hfill v
+					\State remove $u$ from $Q$	\hfill v
+					\ForEach {neighbor $v$ of $u$}	\hfill $\sum_{i=0}^{v}(v-i+2)$
+						\State $alt \leftarrow dist[u] + length(u, v)$ $\sum_{i=0}^{v}(v-i+1)$
+						\If{alt $<$ dist[v]}	\hfill $\sum_{i=0}^{v}(v-i+2)$
+							\State $dist[v] \leftarrow alt$	\hfill $\sum_{i=0}^{v}(v-i+2)$
+							\State $prev[v] \leftarrow u$	\hfill $\sum_{i=0}^{v}(v-i+2)$
 						\EndIf
-					\EndFor-==
+					\EndFor
 				\EndWhile \\
 				\Return dist[], prev[]
 			\EndFunction

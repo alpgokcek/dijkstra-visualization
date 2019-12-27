@@ -21,6 +21,19 @@
 \providecommand{\BIBdecl}{\relax}
 \BIBdecl
 
+\bibitem{dijkstra}
+\BIBentryALTinterwordspacing
+E.~W. Dijkstra, ``A note on two problems in connexion with graphs,''
+  \emph{Numerische Mathematik}, vol.~1, no.~1, pp. 269--271, 1959. [Online].
+  Available: \url{https://doi.org/10.1007/BF01386390}
+\BIBentrySTDinterwordspacing
+
+\bibitem{524471}
+G.~{Oberhauser} and R.~{Simha}, ``Fast data structures for shortest path
+  routing: a comparative evaluation,'' in \emph{Proceedings IEEE International
+  Conference on Communications ICC '95}, vol.~3, June 1995, pp. 1597--1601
+  vol.3.
+
 \bibitem{wiki}
 {Wikipedia contributors}, ``Dijkstra's algorithm --- {Wikipedia}{,} the free
   encyclopedia,''
